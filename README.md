@@ -1,4 +1,4 @@
-#Requirements
+# Requirements
 - Docker
 - Docker Compose
 
@@ -12,5 +12,5 @@ After setup completed set connection information for database in `.env` file inc
 
 The api will be `http://localhost` by default.
 
-#API documentation
+# API documentation
 https://documenter.getpostman.com/view/3236050/UVknubvP
