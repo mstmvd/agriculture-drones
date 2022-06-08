@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AlertController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,4 +13,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::apiResource('alert', \App\Http\Controllers\AlertController::class)->only(['store', 'show', 'destroy']);
+Route::post('alert/batch-store', [AlertController::class, 'batchStore']);
+Route::put('alert/batch-update', [AlertController::class, 'batchUpdate']);
+Route::delete('alert/batch-destroy', [AlertController::class, 'batchDestroy']);
+Route::apiResource('alert', AlertController::class)->only(['index', 'store', 'show', 'destroy']);

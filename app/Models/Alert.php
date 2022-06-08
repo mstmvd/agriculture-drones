@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use App\Traits\TraitUuid;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string id
  * @property int type
  * @property string text
- * @property string distributionListID
+ * @property string distribution_list_id
+ * @property int severity
  */
-class Alert extends Model
+class Alert extends AbstractCrudModel
 {
     use TraitUuid;
-    public $timestamps = false;
+    public $timestamps = true;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -26,6 +26,20 @@ class Alert extends Model
         'id',
         'type',
         'text',
-        'distributionListID'
+        'distribution_list_id',
+        'severity',
+    ];
+
+    public array $filterable = [
+        'id',
+        'type',
+        'distribution_list_id',
+        'severity',
+        'created_at',
+    ];
+
+    public array $sortable = [
+        'type',
+        'severity',
     ];
 }
