@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Alert\AlertBatchDestroyAction;
 use App\Actions\Alert\AlertBatchStoreAction;
 use App\Actions\Alert\AlertBatchUpdateAction;
 use App\Actions\Alert\AlertDestroyAction;
@@ -57,8 +58,7 @@ class AlertController extends Controller
      */
     public function show(string $alert): AlertResource
     {
-        $alert = Cache::get($alert, Alert::query()->find($alert));
-        return new AlertResource($alert);
+        return new AlertResource(Cache::get($alert, Alert::query()->find($alert)));
     }
 
     /**
@@ -80,24 +80,17 @@ class AlertController extends Controller
      */
     public function destroy(Alert $alert, AlertDestroyAction $action): JsonResponse
     {
-        $action->execute($alert);
-        return response()->json(['message' => 'Delete success', 'data' => null]);
+        return response()->json(['message' => 'Delete success', 'data' => $action->execute($alert)]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param AlertBatchDestroyAction $action
      * @return JsonResponse
      */
-    public function batchDestroy(): JsonResponse
+    public function batchDestroy(AlertBatchDestroyAction $action): JsonResponse
     {
-        /** @var Alert[] $alerts */
-        $alerts = Alert::query()->get();
-        $count = count($alerts);
-        foreach ($alerts as $alert) {
-            Cache::forget($alert->id);
-            $alert->delete();
-        }
-        return response()->json(['message' => 'Delete success ', 'data' => ['count' => $count]]);
+        return response()->json(['message' => 'Delete success ', 'data' => ['count' => $action->execute()]]);
     }
 }

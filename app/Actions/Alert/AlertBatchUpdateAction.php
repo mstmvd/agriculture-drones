@@ -6,6 +6,7 @@ use App\DTOs\Alert\AlertDTO;
 use App\Helper;
 use App\Models\Alert;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AlertBatchUpdateAction
 {
@@ -17,13 +18,16 @@ class AlertBatchUpdateAction
     {
         /** @var Alert[] $alerts */
         $alerts = Alert::query()->get();
-        $count = count($alerts);
-        foreach ($alerts as $alert) {
-            Cache::forget($alert->id);
-            $alert->fill(Helper::arrayRemoveNull($alertDTO->toArray()));
-            $alert->save();
+        $updatedAlerts = DB::transaction(function () use ($alertDTO, $alerts) {
+            foreach ($alerts as $alert) {
+                $alert->fill(Helper::arrayRemoveNull($alertDTO->toArray()));
+                $alert->save();
+            }
+            return $alerts;
+        });
+        foreach ($updatedAlerts as $alert) {
             Cache::put($alert->id, $alert);
         }
-        return $count;
+        return count($updatedAlerts);
     }
 }
